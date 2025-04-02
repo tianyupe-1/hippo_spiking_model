@@ -22,7 +22,7 @@ def rasterPlot(ev):
     tims = ev['times']
     for s in srcs_:
         c = f'#2757{int((s-m)/(M-m)*255):02X}'
-        plt.vlines(tims[srcs == s], s-m, s-m+1, c)
+        plt.vlines(tims[srcs == s], s-m+0.5, s-m+1.5, c)
 
 ###
 # Synapte models
@@ -45,6 +45,23 @@ def plastic_syn(w): # TM model of STP
         'weight': w*scaleing_TM, # scaling para based on synaptic connectivity strength w
         'delay': 1,
     }
+
+
+##
+# Neuronal groups
+##
+
+# number of neurons for each group
+PYR_n = 300
+BiC_n = 20 
+PV_n = 20
+CCK_n = 20 
+
+# injection currents (STIM) to each neuronal group
+PYR_I = 0.8 
+BiC_I = 0.5 
+PV_I = 1 
+CCK_I = 1 
 
 
 ###
@@ -94,21 +111,6 @@ def runSim(weights, tstop, exc_static=False, inh_static=False): # decide if exci
 
     setNestOpts()
 
-    ##
-    # Neuronal groups
-    ##
-    
-    # number of neurons for each group
-    PYR_n = 300
-    BiC_n = 20 
-    PV_n = 20
-    CCK_n = 20 
-
-    # injection currents (STIM) to each neuronal group
-    PYR_I = 0.8 
-    BiC_I = 0.5 
-    PV_I = 1 
-    CCK_I = 1 
     
     ##
     # Define synapses
@@ -384,10 +386,16 @@ plt.xlabel("Time (ms)")
 plt.subplot(223)
 rasterPlot(PYR_ev)
 plt.ylabel("PYR neuron id")
+yticks_main = np.arange(1,PYR_n,step=int(PYR_n/10))
+yticks_max = np.array([PYR_n])
+plt.yticks(np.concatenate((yticks_main,yticks_max)))
 plt.xlabel("Time (ms)")
 plt.subplot(224)
 rasterPlot(BiC_ev)
 plt.ylabel("BiC neuron id")
+yticks_main = np.arange(1,BiC_n,step=int(BiC_n/10))
+yticks_max = np.array([BiC_n])
+plt.yticks(np.concatenate((yticks_main,yticks_max)))
 plt.xlabel("Time (ms)")
 plt.show()
 #plot_FR(time_vec, kernel_PSTH_PV, 'y', 'PV')
